@@ -121,7 +121,14 @@ appreciate citations to the following paper:
 
 ::
 
-    Please check back in a couple of days. We are currently in the process of publishing.
+    @article{kmeans_smote,
+        title = {Oversampling for Imbalanced Learning Based on K-Means and SMOTE},
+        author = {Last, Felix and Douzas, Georgios and Bacao, Fernando},
+        year = {2017},
+        archivePrefix = "arXiv",
+        eprint = "1711.00837",
+        primaryClass = "cs.LG"
+    }
 
 References
 ~~~~~~~~~~
