@@ -117,7 +117,8 @@ Citation
 ~~~~~~~~
 
 If you use k-means SMOTE in a scientific publication, we would
-appreciate citations to the following paper:
+appreciate citations to the following
+`paper <https://arxiv.org/abs/1711.00837>`__:
 
 ::
 
