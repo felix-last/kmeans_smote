@@ -6,7 +6,7 @@ def read(fname):
 
 setup(
     name='kmeans_smote',
-    version="0.1.4",
+    version="0.0.1",
     py_modules=['kmeans_smote'],
     install_requires=['imbalanced-learn>=0.3.1','scipy>=0.13.3','numpy>=1.8.2','scikit-learn>=0.19.0'],
     author="Felix Last",
