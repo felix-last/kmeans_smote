@@ -33,7 +33,7 @@ Pypi
 
 .. code:: sh
 
-    pip install kmeans_smote
+    pip install kmeans-smote
 
 From Source
 ^^^^^^^^^^^
