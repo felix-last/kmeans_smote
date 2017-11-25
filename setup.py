@@ -2,13 +2,26 @@ import os
 from setuptools import setup
 
 def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+    return open(os.path.join(os.path.dirname(__file__), fname), encoding='utf-8').read()
+
+
+tests_require = [
+    'pytest>=3.2.5, < 3.3'
+],
 
 setup(
     name='kmeans_smote',
     version="0.0.1",
     py_modules=['kmeans_smote'],
-    install_requires=['imbalanced-learn>=0.3.1','scipy>=0.13.3','numpy>=1.8.2','scikit-learn>=0.19.0'],
+    install_requires=[
+        'imbalanced-learn>=0.3.1, <0.4',
+        'numpy>=1.13, <1.14',
+        'scikit-learn>=0.19.0, <0.20'
+    ],
+    tests_require=tests_require,
+    extras_require={
+        'test':tests_require
+    },
     author="Felix Last",
     author_email="mail@felixlast.de",
     url="https://github.com/felix-last/kmeans_smote",

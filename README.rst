@@ -19,7 +19,9 @@ Dependencies
 The implementation is tested under python 3.6 and works with the latest
 release of the imbalanced-learn framework:
 
--  imbalanced-learn (>= 0.3.1)
+-  imbalanced-learn (>=0.3.1, <0.4)
+-  numpy (>=1.8.x, <1.9)
+-  scikit-learn (>=0.19.0, <0.20)
 
 Installation
 ~~~~~~~~~~~~
@@ -111,7 +113,8 @@ Contributing
 ~~~~~~~~~~~~
 
 Please feel free to submit an issue if things work differently than
-expected. Pull requests are also welcome.
+expected. Pull requests are also welcome - just make sure that tests are
+green by running ``pytest`` before submitting.
 
 Citation
 ~~~~~~~~
@@ -136,7 +139,7 @@ References
 
 [1] MacQueen, J. “Some Methods for Classification and Analysis of
 Multivariate Observations.” Proceedings of the Fifth Berkeley Symposium
-on Mathematical Statistics and Probability, 1967, p. 281297.
+on Mathematical Statistics and Probability, 1967, p. 281-297.
 
 [2] Chawla, Nitesh V., et al. “SMOTE: Synthetic Minority over-Sampling
 Technique.” Journal of Artificial Intelligence Research, vol. 16, Jan.
