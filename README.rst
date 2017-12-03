@@ -1,7 +1,7 @@
 Oversampling for Imbalanced Learning based on K-Means and SMOTE
 ---------------------------------------------------------------
 
-|Build Status|
+|Build Status| |PyPI version|
 
 K-Means SMOTE is an oversampling method for class-imbalanced data. It
 aids classification by generating minority class samples in safe and
@@ -149,3 +149,5 @@ Technique.” Journal of Artificial Intelligence Research, vol. 16, Jan.
 
 .. |Build Status| image:: https://travis-ci.org/felix-last/kmeans_smote.svg?branch=master
    :target: https://travis-ci.org/felix-last/kmeans_smote
+.. |PyPI version| image:: https://badge.fury.io/py/kmeans-smote.svg
+   :target: https://badge.fury.io/py/kmeans-smote
