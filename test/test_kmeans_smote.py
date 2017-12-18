@@ -2,7 +2,7 @@
 # Authors: Felix Last
 # License: MIT
 
-# from unittest import assertTrue
+import warnings
 import numpy as np
 from numpy.testing import (assert_allclose, assert_array_equal,
     assert_raises_regex)
@@ -37,6 +37,18 @@ def test_smoke(plot=False):
 
     assert (np.unique(y_resampled, return_counts=True)[1]
         == np.unique(Y_EXPECTED, return_counts=True)[1]).all()
+    assert (X_resampled.shape == X_SHAPE_EXPECTED)
+    if plot:
+        plot_resampled(X_resampled, y_resampled, 'smoke_test')
+
+
+def test_smoke_regular_kmeans(plot=False):
+    """Execute k-means SMOTE with default parameters using regular k-means (not minibatch)"""
+    kmeans_smote = KMeansSMOTE(random_state=RND_SEED, use_minibatch_kmeans=False)
+    X_resampled, y_resampled = kmeans_smote.fit_sample(X, Y)
+
+    assert (np.unique(y_resampled, return_counts=True)[1]
+            == np.unique(Y_EXPECTED, return_counts=True)[1]).all()
     assert (X_resampled.shape == X_SHAPE_EXPECTED)
     if plot:
         plot_resampled(X_resampled, y_resampled, 'smoke_test')
@@ -90,6 +102,35 @@ def test_random_oversampling_limit_case(plot=False):
 
     assert_array_equal(X_resampled, X_resampled_random_oversampler)
     assert_array_equal(y_resampled, y_resampled_random_oversampler)
+
+
+def test_smote_fallback(plot=False):
+    """Assert that regular SMOTE is applied if no minority clusters are found."""
+    kmeans_smote = KMeansSMOTE(
+        random_state=RND_SEED,
+        kmeans_args={
+            'n_clusters': 1
+        }
+    )
+    smote = SMOTE(random_state=RND_SEED)
+    with warnings.catch_warnings(record=True) as w:
+        X_resampled, y_resampled = kmeans_smote.fit_sample(X, Y)
+
+        assert len(w) == 1
+        assert "No minority clusters found" in str(w[0].message)
+        assert "Performing regular SMOTE" in str(w[0].message)
+        assert issubclass(w[0].category, UserWarning)
+
+        X_resampled_smote, y_resampled_smote = smote.fit_sample(X, Y)
+
+        if plot:
+            plot_resampled(X_resampled, y_resampled,
+                        'smote_fallback_test_kmeans_smote')
+            plot_resampled(X_resampled_smote, y_resampled_smote,
+                        'smote_fallback_test_smote')
+
+        assert_array_equal(X_resampled, X_resampled_smote)
+        assert_array_equal(y_resampled, y_resampled_smote)
 
 
 def plot_resampled(X_resampled, y_resampled, test_name, save_path='.'):
