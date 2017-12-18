@@ -6,7 +6,9 @@ def read(fname):
 
 
 tests_require = [
-    'pytest>=3.2.5, < 3.3'
+    'pytest',
+    'pytest-cov',
+    'codecov'
 ],
 
 setup(

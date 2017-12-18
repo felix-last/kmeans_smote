@@ -4,4 +4,5 @@ python:
 install:
   - pip install ".[test]"
 script:
-  - pytest
+  - pytest --cov=kmeans_smote
+  - codecov
