@@ -5,6 +5,7 @@
 
 import warnings
 import math
+import copy
 import numpy as np
 
 from sklearn.utils import check_random_state
@@ -135,8 +136,8 @@ class KMeansSMOTE(BaseOverSampler):
                 n_jobs=1):
         super(KMeansSMOTE, self).__init__(ratio=ratio, random_state=random_state)
         self.imbalance_ratio_threshold = imbalance_ratio_threshold
-        self.kmeans_args = kmeans_args
-        self.smote_args = smote_args
+        self.kmeans_args = copy.deepcopy(kmeans_args)
+        self.smote_args = copy.deepcopy(smote_args)
         self.random_state = random_state
         self.minority_weight = minority_weight
         self.n_jobs = n_jobs
