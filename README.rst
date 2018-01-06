@@ -22,7 +22,7 @@ The implementation is tested under python 3.6 and works with the latest
 release of the imbalanced-learn framework:
 
 -  imbalanced-learn (>=0.3.1, <0.4)
--  numpy (>=1.8.x, <1.9)
+-  numpy (numpy>=1.13, <1.15)
 -  scikit-learn (>=0.19.0, <0.20)
 
 Installation
