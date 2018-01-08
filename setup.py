@@ -17,8 +17,8 @@ setup(
     py_modules=['kmeans_smote'],
     install_requires=[
         'imbalanced-learn>=0.3.1, <0.4',
-        'numpy>=1.13,<1.15',
-        'scikit-learn>=0.19.0, <0.20'
+        'scikit-learn>=0.19.0, <0.20',
+        'numpy>=1.13,<1.15'
     ],
     tests_require=tests_require,
     extras_require={
