@@ -160,7 +160,7 @@ class KMeansSMOTE(BaseOverSampler):
             kmeans = KMeans(**self.kmeans_args)
 
         if self.use_minibatch_kmeans and 'init_size' not in self.kmeans_args:
-            self.kmeans_args['init_size'] = min(2 * self.kmeans_args['n_clusters'], X.shape[0])
+            self.kmeans_args['init_size'] = min(2 * kmeans.n_clusters, X.shape[0])
             kmeans = KMeans(**self.kmeans_args)
 
         kmeans.fit_transform(X)
@@ -276,6 +276,11 @@ class KMeansSMOTE(BaseOverSampler):
                             target_ratio[majority_class_label] = 1 + target_ratio[majority_class_label]
                             cluster_y = np.append(cluster_y, np.asarray(majority_class_label).reshape((1,)), axis=0)
 
+                        # clear target ratio of labels not present in cluster
+                        for label in list(target_ratio.keys()):
+                            if label not in cluster_y:
+                                del target_ratio[label]
+
                         # modify copy of the user defined smote_args to reflect computed parameters
                         smote_args['ratio'] = target_ratio
 
@@ -299,21 +304,26 @@ class KMeansSMOTE(BaseOverSampler):
                         if remove_index > -1:
                             # since SMOTE's results are ordered the same way as the data passed into it,
                             # the temporarily added point is at the same index position as it was added.
-                            cluster_resampled_X = np.delete(cluster_resampled_X, remove_index, 0)
-                            cluster_resampled_y = np.delete(cluster_resampled_y, remove_index, 0)
+                            for l in [cluster_resampled_X, cluster_resampled_y, cluster_X, cluster_y]:
+                                np.delete(l, remove_index, 0)
 
                         # add new generated samples to resampled
                         resampled.append( (
-                            cluster_resampled_X[cluster_y.size:],
+                            cluster_resampled_X[cluster_y.size:,:],
                             cluster_resampled_y[cluster_y.size:]))
             else:
                 # all weights are zero -> perform regular smote
-                minority_count = np.count_nonzero( y == minority_class_label )
-                warnings.warn('No minority clusters found for class {}. Performing regular SMOTE. Try changing the number of clusters. Recommended number of clusters: between {} and the number of majority class instances.'.format(minority_class_label, minority_count))
-
+                warnings.warn('No minority clusters found for class {}. Performing regular SMOTE. Try changing the number of clusters.'.format(minority_class_label))
+                target_ratio = {label: np.count_nonzero(y == label) for label in self.ratio_}
+                target_ratio[minority_class_label] = self.ratio_[minority_class_label]
+                minority_count = np.count_nonzero(y == minority_class_label)
                 smote_args = self._validate_smote_args(smote_args, minority_count)
                 oversampler = SMOTE(**smote_args)
-                return oversampler.fit_sample(X, y)
+                X_smote, y_smote = oversampler.fit_sample(X, y)
+                resampled.append((
+                    X_smote[y.size:,:],
+                    y_smote[y.size:]))
+
 
         resampled = list(zip(*resampled))
         if(len(resampled) > 0):
