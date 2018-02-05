@@ -26,7 +26,7 @@ class KMeansSMOTE(BaseOverSampler):
     1. Cluster the entire input space using k-means.
     2. Distribute the number of samples to generate across clusters:
 
-        1. Filter out clusters which have a high number of majority class samples.
+        1. Select clusters which have a high number of minority class samples.
         2. Assign more synthetic samples to clusters where minority class samples are sparsely distributed.
 
     3. Oversample each filtered cluster using SMOTE.
@@ -170,7 +170,7 @@ class KMeansSMOTE(BaseOverSampler):
         return cluster_assignment
 
     def _filter_clusters(self, X, y, cluster_assignment, minority_class_label):
-        """Run k-means to cluster the dataset
+        """Determine sampling weight for each cluster.
 
         Parameters
         ----------
