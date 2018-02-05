@@ -271,7 +271,7 @@ class KMeansSMOTE(BaseOverSampler):
         if self.density_power is None:
             self.density_power = X.shape[1]
 
-        resampled = list()
+        resampled = [ (X.copy(), y.copy()) ]
         for minority_class_label, n_samples in self.ratio_.items():
             if n_samples == 0:
                 continue
@@ -326,11 +326,10 @@ class KMeansSMOTE(BaseOverSampler):
                             cluster_resampled_X = np.delete(cluster_resampled_X, remove_index, 0)
                             cluster_resampled_y = np.delete(cluster_resampled_y, remove_index, 0)
 
-                        resampled.append( (cluster_resampled_X, cluster_resampled_y) )
-
-                    else:
-                        # don't oversample this cluster, just add it to resampled results
-                        resampled.append((cluster_X, cluster_y))
+                        # add new generated samples to resampled
+                        resampled.append( (
+                            cluster_resampled_X[cluster_y.size:],
+                            cluster_resampled_y[cluster_y.size:]))
             else:
                 # all weights are zero -> perform regular smote
                 minority_count = np.count_nonzero( y == minority_class_label )
@@ -344,10 +343,6 @@ class KMeansSMOTE(BaseOverSampler):
         if(len(resampled) > 0):
             X_resampled = np.concatenate(resampled[0], axis=0)
             y_resampled = np.concatenate(resampled[1], axis=0)
-        else:
-            # no samples were generated because none were requested
-            X_resampled = X.copy()
-            y_resampled = y.copy()
         return X_resampled, y_resampled
 
 
