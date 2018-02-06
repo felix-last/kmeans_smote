@@ -156,10 +156,6 @@ class KMeansSMOTE(BaseOverSampler):
             from sklearn.cluster import KMeans as KMeans
 
         kmeans = KMeans(**self.kmeans_args)
-        if(X.shape[0] < kmeans.n_clusters):
-            self.kmeans_args['n_clusters'] = X.shape[0]
-            kmeans = KMeans(**self.kmeans_args)
-
         if self.use_minibatch_kmeans and 'init_size' not in self.kmeans_args:
             self.kmeans_args['init_size'] = min(2 * kmeans.n_clusters, X.shape[0])
             kmeans = KMeans(**self.kmeans_args)
