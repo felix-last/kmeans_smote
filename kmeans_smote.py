@@ -202,7 +202,7 @@ class KMeansSMOTE(BaseOverSampler):
             minority_count = cluster[mask].shape[0]
             majority_count = cluster[~mask].shape[0]
             imbalance_ratio = (majority_count + 1) / (minority_count + 1)
-            if (imbalance_ratio < self.imbalance_ratio_threshold) and (minority_count > 1):
+            if (imbalance_ratio < imbalance_ratio_threshold) and (minority_count > 1):
                 distances = euclidean_distances(cluster[mask])
                 non_diagonal_distances = distances[
                     ~np.eye(distances.shape[0], dtype=np.bool)

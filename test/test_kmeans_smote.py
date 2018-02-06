@@ -196,7 +196,28 @@ def test_smote_limit_case_multiclass(plot=False):
     assert_array_equal(X_resampled, X_resampled_smote)
     assert_array_equal(y_resampled, y_resampled_smote)
 
+
+def test_multiclass_irt_dict(plot=False):
+    """
+    Execute k-means SMOTE for multi-class dataset with
+    different imbalance ratio thresholds per class.
+    """
+    kmeans_smote = KMeansSMOTE(
+        random_state=RND_SEED,
+        kmeans_args={'n_clusters': 10},
+        imbalance_ratio_threshold={1: 1, 2: np.inf})
+    X_resampled, y_resampled = kmeans_smote.fit_sample(
+        X_MULTICLASS, Y_MULTICLASS)
+
+    assert (np.unique(y_resampled, return_counts=True)[1]
+            == np.unique(Y_MULTICLASS_EXPECTED, return_counts=True)[1]).all()
+    assert (X_resampled.shape == X_MULTICLASS_SHAPE_EXPECTED)
+    if plot:
+        plot_resampled(X_MULTICLASS, X_resampled, Y_MULTICLASS,
+                       y_resampled, 'multiclass_test')
+
 def test_documentation_example():
+    """Test basic code example shown in documentation"""
     from imblearn.datasets import fetch_datasets
 
     datasets = fetch_datasets(filter_data=['oil'])
