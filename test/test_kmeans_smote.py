@@ -196,6 +196,28 @@ def test_smote_limit_case_multiclass(plot=False):
     assert_array_equal(X_resampled, X_resampled_smote)
     assert_array_equal(y_resampled, y_resampled_smote)
 
+def test_documentation_example():
+    from imblearn.datasets import fetch_datasets
+
+    datasets = fetch_datasets(filter_data=['oil'])
+    X, y = datasets['oil']['data'], datasets['oil']['target']
+
+    labels, counts = np.unique(y, return_counts=True)
+    assert counts[0] > counts[1]
+
+    kmeans_smote = KMeansSMOTE(
+        kmeans_args={
+            'n_clusters': 100
+        },
+        smote_args={
+            'k_neighbors': 10
+        }
+    )
+    X_resampled, y_resampled = kmeans_smote.fit_sample(X, y)
+
+    labels, counts = np.unique(y_resampled, return_counts=True)
+    assert counts[0] == counts[1]
+
 def plot_resampled(X_original, X_resampled, y_original, y_resampled, test_name, save_path='.'):
     """Create a colored scatter plot of X_resampled and save the image to disk"""
     import matplotlib.pyplot as plt
