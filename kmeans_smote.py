@@ -75,9 +75,10 @@ class KMeansSMOTE(BaseOverSampler):
         `ratio` will be overwritten according to ratio passed to this class. `random_state`
         will be passed from this class if none is specified.
 
-    imbalance_ratio_threshold : float, optional (default=1.0)
+    imbalance_ratio_threshold : float or dict, optional (default=1.0)
         Specify a threshold for a cluster's imbalance ratio  ``((majority_count + 1) / (minority_count + 1))``.
-        Clusters with a higher imbalance ratio are not oversampled.
+        Only clusters with an imbalance ratio less than the threshold are oversampled. Use a dictionary to specify
+        different thresholds for different minority classes.
 
     density_power : float, optional (default=None)
         Used to compute the density of minority samples within each cluster. By default, the number of features will be used.
@@ -195,6 +196,9 @@ class KMeansSMOTE(BaseOverSampler):
         sparsity_factors = np.zeros((largest_cluster_label + 1,), dtype=np.float64)
         minority_mask = (y == minority_class_label)
         sparsity_sum = 0
+        imbalance_ratio_threshold = self.imbalance_ratio_threshold
+        if isinstance(imbalance_ratio_threshold, dict):
+            imbalance_ratio_threshold = imbalance_ratio_threshold[minority_class_label]
 
         for i in np.unique(cluster_assignment):
             cluster = X[cluster_assignment == i]
