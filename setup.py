@@ -18,7 +18,7 @@ setup(
     install_requires=[
         'imbalanced-learn>=0.3.1, <0.4',
         'scikit-learn>=0.19.0, <0.20',
-        'numpy>=1.13,<1.15'
+        'numpy>=1.13,<1.16'
     ],
     tests_require=tests_require,
     extras_require={
