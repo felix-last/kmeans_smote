@@ -40,7 +40,7 @@ class KMeansSMOTE(BaseOverSampler):
 
     Parameters
     ----------
-    ratio : str, dict, or callable, optional (default='auto')
+    sampling_strategy : str, dict, or callable, optional (default='auto')
         Ratio to use for resampling the data set.
 
         - If ``str``, has to be one of: (i) ``'minority'``: resample the
@@ -72,7 +72,7 @@ class KMeansSMOTE(BaseOverSampler):
     smote_args : dict, optional (default={})
         Parameters to be passed to ``imblearn.over_sampling.SMOTE``. Note that ``k_neighbors`` is automatically
         adapted without warning when a cluster is smaller than the number of neighbors specified.
-        `ratio` will be overwritten according to ratio passed to this class. `random_state`
+        `sampling_strategy` will be overwritten according to sampling_strategy passed to this class. `random_state`
         will be passed from this class if none is specified.
 
     imbalance_ratio_threshold : float or dict, optional (default=1.0)
@@ -125,8 +125,9 @@ class KMeansSMOTE(BaseOverSampler):
                 imbalance_ratio_threshold=1.0,
                 density_power=None,
                 use_minibatch_kmeans=True,
-                n_jobs=1):
-        super(KMeansSMOTE, self).__init__(sampling_strategy=sampling_strategy)
+                n_jobs=1,
+                **kwargs):
+        super(KMeansSMOTE, self).__init__(sampling_strategy=sampling_strategy, **kwargs)
         self.imbalance_ratio_threshold = imbalance_ratio_threshold
         self.kmeans_args = copy.deepcopy(kmeans_args)
         self.smote_args = copy.deepcopy(smote_args)
