@@ -13,11 +13,11 @@ tests_require = [
 
 setup(
     name='kmeans_smote',
-    version="0.1.0",
+    version="0.1.1",
     py_modules=['kmeans_smote'],
     install_requires=[
-        'imbalanced-learn>=0.3.1, <0.4',
-        'scikit-learn>=0.19.0, <0.20',
+        'imbalanced-learn>=0.4.0,<0.5',
+        'scikit-learn>=0.19.0,<0.21',
         'numpy>=1.13,<1.16'
     ],
     tests_require=tests_require,
