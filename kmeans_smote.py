@@ -118,7 +118,7 @@ class KMeansSMOTE(BaseOverSampler):
     """
 
     def __init__(self,
-                ratio='auto',
+                sampling_strategy='auto',
                 random_state=None,
                 kmeans_args={},
                 smote_args={},
@@ -126,7 +126,7 @@ class KMeansSMOTE(BaseOverSampler):
                 density_power=None,
                 use_minibatch_kmeans=True,
                 n_jobs=1):
-        super(KMeansSMOTE, self).__init__(ratio=ratio, random_state=random_state)
+        super(KMeansSMOTE, self).__init__(sampling_strategy=sampling_strategy)
         self.imbalance_ratio_threshold = imbalance_ratio_threshold
         self.kmeans_args = copy.deepcopy(kmeans_args)
         self.smote_args = copy.deepcopy(smote_args)
@@ -222,7 +222,7 @@ class KMeansSMOTE(BaseOverSampler):
         return sampling_weights
 
 
-    def _sample(self, X, y):
+    def _fit_resample(self, X, y):
         """Resample the dataset.
 
         Parameters
@@ -248,7 +248,12 @@ class KMeansSMOTE(BaseOverSampler):
             self.density_power = X.shape[1]
 
         resampled = [ (X.copy(), y.copy()) ]
-        for minority_class_label, n_samples in self.ratio_.items():
+        sampling_ratio = {k: v for k, v in self.sampling_strategy_.items()}
+        # sampling_strategy_ does not contain classes where n_samples 0
+        for class_label in np.unique(y):
+            if class_label not in sampling_ratio:
+                sampling_ratio[class_label] = 0
+        for minority_class_label, n_samples in sampling_ratio.items():
             if n_samples == 0:
                 continue
 
@@ -262,7 +267,7 @@ class KMeansSMOTE(BaseOverSampler):
                     cluster_y = y[cluster_assignment == i]
                     if sampling_weights[i] > 0:
                         # determine ratio for oversampling the current cluster
-                        target_ratio = {label: np.count_nonzero(cluster_y == label) for label in self.ratio_}
+                        target_ratio = {label: np.count_nonzero(cluster_y == label) for label in sampling_ratio}
                         cluster_minority_count = np.count_nonzero(cluster_y == minority_class_label)
                         generate_count = int(round(n_samples * sampling_weights[i]))
                         target_ratio[minority_class_label] = generate_count + cluster_minority_count
@@ -272,7 +277,7 @@ class KMeansSMOTE(BaseOverSampler):
                         if np.unique(cluster_y).size < 2:
                             remove_index = cluster_y.size
                             cluster_X = np.append(cluster_X, np.zeros((1,cluster_X.shape[1])), axis=0)
-                            majority_class_label = next( key for key in self.ratio_.keys() if key != minority_class_label )
+                            majority_class_label = next( key for key in sampling_ratio.keys() if key != minority_class_label )
                             target_ratio[majority_class_label] = 1 + target_ratio[majority_class_label]
                             cluster_y = np.append(cluster_y, np.asarray(majority_class_label).reshape((1,)), axis=0)
 
@@ -282,7 +287,7 @@ class KMeansSMOTE(BaseOverSampler):
                                 del target_ratio[label]
 
                         # modify copy of the user defined smote_args to reflect computed parameters
-                        smote_args['ratio'] = target_ratio
+                        smote_args['sampling_strategy'] = target_ratio
 
                         smote_args = self._validate_smote_args(smote_args, cluster_minority_count)
                         oversampler = SMOTE(**smote_args)
@@ -298,7 +303,7 @@ class KMeansSMOTE(BaseOverSampler):
                         with warnings.catch_warnings():
                             # ignore warnings about minority class getting bigger than majority class
                             # since this would only be true within this cluster
-                            warnings.filterwarnings(action='ignore', category=UserWarning, message='After over-sampling\, the number of samples \(.*\) in class .* will be larger than the number of samples in the majority class \(class #.* \-\> .*\)')
+                            warnings.filterwarnings(action='ignore', category=UserWarning, message=r'After over-sampling, the number of samples \(.*\) in class .* will be larger than the number of samples in the majority class \(class #.* \-\> .*\)')
                             cluster_resampled_X, cluster_resampled_y = oversampler.fit_sample(cluster_X, cluster_y)
 
                         if remove_index > -1:
@@ -314,8 +319,8 @@ class KMeansSMOTE(BaseOverSampler):
             else:
                 # all weights are zero -> perform regular smote
                 warnings.warn('No minority clusters found for class {}. Performing regular SMOTE. Try changing the number of clusters.'.format(minority_class_label))
-                target_ratio = {label: np.count_nonzero(y == label) for label in self.ratio_}
-                target_ratio[minority_class_label] = self.ratio_[minority_class_label]
+                target_ratio = {label: np.count_nonzero(y == label) for label in sampling_ratio}
+                target_ratio[minority_class_label] = sampling_ratio[minority_class_label]
                 minority_count = np.count_nonzero(y == minority_class_label)
                 smote_args = self._validate_smote_args(smote_args, minority_count)
                 oversampler = SMOTE(**smote_args)
