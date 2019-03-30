@@ -13,7 +13,7 @@ tests_require = [
 
 setup(
     name='kmeans_smote',
-    version="0.1.1",
+    version="0.1.2",
     py_modules=['kmeans_smote'],
     install_requires=[
         'imbalanced-learn>=0.4.0,<0.5',

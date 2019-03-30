@@ -239,6 +239,19 @@ def test_documentation_example():
     labels, counts = np.unique(y_resampled, return_counts=True)
     assert counts[0] == counts[1]
 
+
+def test_backwards_compatibility(plot=False):
+    """Test if deprecated parameter ratio can still be used without error"""
+    with warnings.catch_warnings():
+        warnings.filterwarnings('ignore', category=DeprecationWarning)
+        kmeans_smote = KMeansSMOTE(random_state=RND_SEED, ratio={0: Y.sum()})
+        X_resampled, y_resampled = kmeans_smote.fit_sample(X, Y)
+    assert (np.unique(y_resampled, return_counts=True)[1]
+            == np.unique(Y_EXPECTED, return_counts=True)[1]).all()
+    assert (X_resampled.shape == X_SHAPE_EXPECTED)
+    if plot:
+        plot_resampled(X, X_resampled, Y, y_resampled, 'smoke_test')
+
 def plot_resampled(X_original, X_resampled, y_original, y_resampled, test_name, save_path='.'):
     """Create a colored scatter plot of X_resampled and save the image to disk"""
     import matplotlib.pyplot as plt
