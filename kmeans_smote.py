@@ -120,14 +120,18 @@ class KMeansSMOTE(BaseOverSampler):
     def __init__(self,
                 sampling_strategy='auto',
                 random_state=None,
-                kmeans_args={},
-                smote_args={},
+                kmeans_args=None,
+                smote_args=None,
                 imbalance_ratio_threshold=1.0,
                 density_power=None,
                 use_minibatch_kmeans=True,
                 n_jobs=1,
                 **kwargs):
         super(KMeansSMOTE, self).__init__(sampling_strategy=sampling_strategy, **kwargs)
+        if kmeans_args is None:
+            kmeans_args = {}
+        if smote_args is None:
+            smote_args = {}
         self.imbalance_ratio_threshold = imbalance_ratio_threshold
         self.kmeans_args = copy.deepcopy(kmeans_args)
         self.smote_args = copy.deepcopy(smote_args)
